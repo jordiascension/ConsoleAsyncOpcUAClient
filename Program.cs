@@ -34,17 +34,25 @@
             };
 
             // Lista de nodos (ejemplo)
-            var nodeIds = new[]
-            {
-                "ns=2;s=Demo/MyChangingValue",
-                "ns=2;s=Demo/Variable1",
-                "ns=2;s=Demo/Variable2",
-            };
+            //var nodeIds = new[]
+            //{
+              //  "ns=2;s=Demo/MyChangingValue",
+              //  "ns=2;s=Demo/Variable1",
+              //  "ns=2;s=Demo/Variable2",
+            //};
+
+            var nodeIds =
+            new[] { "ns=2;s=Demo/MyChangingValue" }
+            .Concat(
+                Enumerable.Range(1, 7000)
+                          .Select(i => $"ns=2;s=Demo/Variable{i}")
+            )
+            .ToArray();
 
             // Si quieres “Tag001..Tag020” así podemos ver como recibes los valores de ellos en la primera subscripción.
-            nodeIds = nodeIds
-                .Concat(Enumerable.Range(1, 20).Select(i => $"ns=2;s=Demo/Tag{i:000}"))
-                .ToArray();
+            //nodeIds = nodeIds
+              //  .Concat(Enumerable.Range(1, 0).Select(i => $"ns=2;s=Demo/Tag{i:000}"))
+                //.ToArray();
 
             RunClientLoop(nodeIds, _cts.Token);
 
@@ -106,11 +114,13 @@
                 .ToArray();
 
             _sub = _client.SubscribeNodes(commands);
+            Console.WriteLine($"MonitoredItems creados: {_sub.MonitoredItems.Count} / {commands.Length}");
 
             // Config de la suscripción
             _sub.PublishingInterval = PublishingIntervalMs;
 
             // Config por MonitoredItem (si tu API expone MonitoredItems)
+           
             foreach (var mi in _sub.MonitoredItems)
             {
                 mi.SamplingInterval = SamplingIntervalMs;
