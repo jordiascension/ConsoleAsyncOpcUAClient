@@ -5,12 +5,14 @@
     using Opc.UaFx.Client;
 
     using System;
-    using System.Linq;
-    using System.Timers;
-
     using System;
+    using System.Diagnostics;
+    using System.Linq;
     using System.Linq;
     using System.Threading;
+    using System.Timers;
+    using System.Xml.Linq;
+
     // using Opc.UaFx;         // según tu librería
     // using Opc.UaFx.Client;  // según tu librería
 
@@ -98,6 +100,10 @@
 
         private static void ConnectAndSubscribe(string[] nodeIds)
         {
+            var sw = new Stopwatch();
+
+            sw.Start();
+
             SafeCleanup();
 
             _client = new OpcClient(EndpointUrl);
@@ -129,6 +135,10 @@
             }
 
             _sub.ApplyChanges();
+            sw.Stop();
+
+            Console.WriteLine($"Tiempo: {sw.Elapsed.TotalSeconds} segundos");
+            Console.WriteLine($"Tiempo exacto: {sw.Elapsed}");
         }
 
         private static void HandleDataChanged(object sender, OpcDataChangeReceivedEventArgs e)
